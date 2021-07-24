@@ -5,7 +5,6 @@ const express = require("express")
     , DiscordRPC = require("discord-rpc")
     , rpc = new DiscordRPC.Client({ transport: 'ipc' })
     , app = express()
-    , PORT = 6868
     , discordClientId = process.env.DISCORD_CLIENTID
 
 var currentState = null
@@ -16,7 +15,7 @@ var currentState = null
 
 async function setActivity() {
     app.use(express.json())
-    app.listen(PORT, () => console.log(`Server running: Port ${PORT}`))
+    app.listen(process.env.PORT, () => console.log(`Server running: Port ${process.env.PORT}`))
     
     function sendMediaStatus(){
         rpc.setActivity(currentState)
@@ -46,9 +45,9 @@ async function setActivity() {
                             + payload.Metadata.index,
                         instance: true,
                         startTimestamp,
-                        largeImageKey: "plex-icon",
+                        largeImageKey: process.env.IMAGE_LOGO,
                         smallImageKey: ((payload.event === "media.pause") 
-                                        ? "pause-icon" : "play-icon")
+                                        ? process.env.IMAGE_PAUSE : process.env.IMAGE_PLAY)
                     }
                     clearInterval(sendInterval)
                     sendInterval = setInterval(sendMediaStatus, 15e3)
@@ -61,9 +60,9 @@ async function setActivity() {
                                 : payload.Metadata.originallyAvailableAt),
                         instance: true,
                         startTimestamp,
-                        largeImageKey: "plex-icon",
+                        largeImageKey: process.env.IMAGE_LOGO,
                         smallImageKey: ((payload.event === "media.pause") 
-                                        ? "pause-icon" : "play-icon")
+                                        ? process.env.IMAGE_PAUSE : process.env.IMAGE_PLAY)
                     }
                     clearInterval(sendInterval)
                     sendInterval = setInterval(sendMediaStatus, 15e3)
